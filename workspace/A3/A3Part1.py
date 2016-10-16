@@ -1,6 +1,7 @@
 ﻿from scipy.fftpack import fft
 import numpy as np
 from fractions import gcd
+from math import isinf
 
 """ A3-Part-1: Minimize energy spread in DFT of sinusoids Given a
 signal consisting of two sinusoids, write a function that selects the
@@ -75,8 +76,15 @@ def minimizeEnergySpreadDFT(x, fs, f1, f2):
                            the M sample segment of x.
                            mX is (M/2)+1 samples long (M is to be computed)
     """
-    M = x * y / gcd(x, y)
-    fft_res = fft(x)
+    p1 = fs / f1
+    p2 = fs / f2
+    M = p1 * p2 / gcd(p1, p2)
+    # print "> M is:", M
+    first_m_samples = x[:M]
+    X = fft(first_m_samples)
+    mX = 20 * np.log10(np.abs(X[:M / 2 + 1]))
+    return mX
+    # return np.array([el if el > (-6 * 20) else 0 for el in mX])
 
 
 def gen_sinusoid(freq, fs, length):
@@ -105,9 +113,17 @@ def round_to_zeroes(x):
 
 
 if __name__ == '__main__':
-    fs = 10000
-    M = 250
-    freq1 = 80
-    freq2 = 200
-    signal = gen_sinusoid(freq1, fs, M) + gen_sinusoid(freq2, fs, 250)
-    print(minimizeEnergySpreadDFT(signal, fs, freq1, freq2))
+    # fs = 10000
+    # M = 250
+    # freq1 = 80
+    # freq2 = 200
+    # signal = gen_sinusoid(freq1, fs, M) + gen_sinusoid(freq2, fs, M)
+    # res = minimizeEnergySpreadDFT(signal, fs, freq1, freq2)
+    # print(len(res), res)
+    fs = 48000
+    M = 1000
+    freq1 = 300
+    freq2 = 800
+    signal = gen_sinusoid(freq1, fs, M) + gen_sinusoid(freq2, fs, M)
+    res = minimizeEnergySpreadDFT(signal, fs, freq1, freq2)
+    print(len(res), res)
