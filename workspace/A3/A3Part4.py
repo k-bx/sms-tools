@@ -4,6 +4,7 @@ from dftModel import dftAnal, dftSynth
 from scipy.signal import get_window
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 """A3-Part-4: Suppressing frequency components using DFT model
 
 Given a frame of the signal, write a function that uses the dftModel
@@ -75,5 +76,82 @@ def suppressFreqDFTmodel(x, fs, N):
     M = len(x)
     w = get_window('hamming', M)
     outputScaleFactor = sum(w)
-    
-    ## Your code here
+    bin_size = fs / N
+    how_many_bins = int(math.ceil(70 / bin_size)) + 1
+
+    mX, pX = dftAnal(x, w, N)
+    # print mX
+    mX_ = mX.copy()
+    for i in range(how_many_bins):
+        mX_[i] = -120
+    # print mX_
+    yfilt = dftSynth(mX_, pX, M) * outputScaleFactor
+    y = dftSynth(mX, pX, M) * outputScaleFactor
+    return (y, yfilt)
+
+
+def gen_sinusoid(freq, fs, length):
+    return np.array([np.cos(2 * np.pi * freq * i / fs) for i
+                     in range(length)])
+
+
+if __name__ == '__main__':
+    from loadTestCases import load
+    p = load(4, 1)
+    # plt.plot(p['input']['x'])
+    # plt.plot(p['output'][0])
+    # plt.plot(p['output'][1])
+    # plt.show()
+    res = suppressFreqDFTmodel(p['input']['x'], p['input']['fs'],
+                               p['input']['N'])
+    # plt.plot(res[0])
+    # plt.plot(res[1])
+    # plt.show()
+    print '> res[0]:', res[0]
+    print '> exp[0]:', p['output'][0]
+    print '> res[1]:', res[1]
+    print '> exp[1]:', p['output'][1]
+
+    # # fs = 10000
+    # # N = 1024
+    # # x = (gen_sinusoid(40, fs, N) +
+    # #      gen_sinusoid(100, fs, N) +
+    # #      gen_sinusoid(200, fs, N) +
+    # #      gen_sinusoid(1000, fs, N))
+
+    # # print(suppressFreqDFTmodel(x, fs, N))
+
+
+
+    # fs = 10000
+    # N = 1024
+    # x = (gen_sinusoid(40, fs, N) +
+    #      gen_sinusoid(100, fs, N) +
+    #      gen_sinusoid(200, fs, N) +
+    #      gen_sinusoid(1000, fs, N))
+    # x_ = (gen_sinusoid(100, fs, N) +
+    #       gen_sinusoid(200, fs, N) +
+    #       gen_sinusoid(1000, fs, N))
+    # # plt.plot(x)
+    # # plt.plot(x_)
+    # # plt.show()
+    # M = len(x)
+    # w = get_window('hamming', M)
+    # outputScaleFactor = sum(w)
+
+    # mX, pX = dftAnal(x, w, N)
+    # # plt.plot(mX)
+    # mX_, pX_ = dftAnal(x_, w, N)
+    # # plt.plot(mX_)
+
+    # bin_size = fs / M
+    # print '> bin_size:', bin_size
+    # how_many_bins = int(math.ceil(70 / bin_size))
+    # print '> how_many_bins:', how_many_bins
+    # for i in range(how_many_bins):
+    #     mX_[i] = -120
+    # # plt.plot(mX_)
+    # # plt.show()
+    # yfilt = dftSynth(mX_, pX, M) * outputScaleFactor
+    # plt.plot(yfilt)
+    # plt.show()

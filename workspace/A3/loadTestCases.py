@@ -24,4 +24,5 @@ def load(partId, caseId=1):
 	return {'input': data['exampleInputs'][part][caseId-1], 'output': data['exampleOutputs'][part][caseId-1]}
 
 
-
+if __name__ == '__main__':
+        print(load(4, 1))
