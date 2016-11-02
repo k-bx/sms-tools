@@ -67,13 +67,13 @@ def estimateF0(inputFile = '../../sounds/cello-double-2.wav'):
     """
 
     ### Change these analysis parameter values marked as XX
-    window = XX
-    M = XX
-    N = XX
-    f0et = XX
-    t = XX
-    minf0 = XX
-    maxf0 = XX
+    window = 'blackman'
+    M = 3001
+    N = 1024*4
+    f0et = 20
+    t = -90
+    minf0 = 100
+    maxf0 = 210
 
     ### Do not modify the code below 
     H = 256                                                     #fix hop size
@@ -99,7 +99,7 @@ def estimateF0(inputFile = '../../sounds/cello-double-2.wav'):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    mX, pX = stft.stftAnal(x, fs, w, N, H)                      #using same params as used for analysis
+    mX, pX = stft.stftAnal(x, w, N, H)                      #using same params as used for analysis
     mX = np.transpose(mX[:,:int(N*(maxplotfreq/fs))+1])
     
     timeStamps = np.arange(mX.shape[1])*H/float(fs)                             
@@ -122,9 +122,14 @@ def estimateF0(inputFile = '../../sounds/cello-double-2.wav'):
 
     if plot == 1: #save the plot too!
         plt.autoscale(tight=True) 
-        plt.show()
+        #plt.show()
     else:
         fig.tight_layout()
         fig.savefig('f0_over_Spectrogram.png', dpi=150, bbox_inches='tight')
 
     return f0
+
+
+if __name__ == '__main__':
+    estimateF0()
+    # FXdkoXTqZ1o0enGC
