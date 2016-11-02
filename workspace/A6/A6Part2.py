@@ -97,22 +97,54 @@ def segmentStableNotesRegions(inputFile = '../../sounds/sax-phrase-short.wav', s
     fs, x = UF.wavread(inputFile)                               #reading inputFile
     w  = get_window(window, M)                                  #obtaining analysis window    
     f0 = HM.f0Detection(x, fs, w, N, H, t, minf0, maxf0, f0et)  #estimating F0
+    # print '> len(x):', len(x)
+    # print '> fs:', fs
+    # print '> len(f0):', len(f0)
 
     ### your code here
 
+    segNumDur = len(f0) / (len(x) / fs) * minNoteDur
+    # print '> segNumDur:', segNumDur
+
     # 1. convert f0 values from Hz to Cents (as described in pdf document)
+    cents = 1200 * np.log2(f0 / 55.0)
 
     #2. create an array containing standard deviation of last winStable samples
-
-    #3. apply threshold on standard deviation values to find indexes of the stable points in melody
-
-    #4. create segments of continuous stable points such that consecutive stable points belong to same segment
+    segments = []
+    curr_segment = []
+    for i in range(len(cents)):
+        low_index = max(0, i - winStable + 1)
+        high_index = i + 1
+        stdev = np.std(cents[low_index:high_index])
+        if math.isnan(stdev):
+            stdev = 0
+        #3. apply threshold on standard deviation values to find indexes of the stable points in melody
+        stable_region = False
+        if i >= winStable:
+            if stdev < stdThsld:
+                stable_region = True
+        #4. create segments of continuous stable points such that consecutive stable points belong to same segment
+        if stable_region:
+            if cents[i] < eps:
+                cents[i] = eps
+            curr_segment.append(i)
+        else:
+            #5. apply segment filtering, i.e. remove segments with are < minNoteDur in length
+            # print '> len(curr_segment):', len(curr_segment)
+            if len(curr_segment) >= segNumDur:
+                beginning = curr_segment[0]
+                end = curr_segment[-1]
+                segments.append(np.array([beginning, end]))
+            curr_segment = []
+    if len(curr_segment) >= segNumDur:
+        segments.append(np.array([curr_segment[0], curr_segment[-1]]))
+    curr_segment = []
+    segments = np.array(segments)
     
-    #5. apply segment filtering, i.e. remove segments with are < minNoteDur in length
-    
+    # print '> segments:', segments
+    # print '> len(segments):', len(segments)
     # plotSpectogramF0Segments(x, fs, w, N, H, f0, segments)  # Plot spectrogram and F0 if needed
-
-    # return segments
+    return segments
 
 
 def plotSpectogramF0Segments(x, fs, w, N, H, f0, segments):
@@ -126,7 +158,7 @@ def plotSpectogramF0Segments(x, fs, w, N, H, f0, segments):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    mX, pX = stft.stftAnal(x, fs, w, N, H)                      #using same params as used for analysis
+    mX, pX = stft.stftAnal(x, w, N, H)                      #using same params as used for analysis
     mX = np.transpose(mX[:,:int(N*(maxplotfreq/fs))+1])
     
     timeStamps = np.arange(mX.shape[1])*H/float(fs)                             
@@ -149,3 +181,20 @@ def plotSpectogramF0Segments(x, fs, w, N, H, f0, segments):
     plt.autoscale(tight=True) 
     plt.show()
     
+
+if __name__ == '__main__':
+    # segmentStableNotesRegions(inputFile='../../sounds/cello-phrase.wav',
+    #                           stdThsld=10, minNoteDur=0.1,
+    #                           winStable=3, window='hamming', M=1025,
+    #                           N=2048, H=256, f0et=5.0, t=-100,
+    #                           minf0=310, maxf0=650)
+    # segmentStableNotesRegions(inputFile='../../sounds/cello-phrase.wav',
+    #                           stdThsld=20, minNoteDur=0.5,
+    #                           winStable=3, window='hamming', M=1025,
+    #                           N=2048, H=256, f0et=5.0, t=-100,
+    #                           minf0=310, maxf0=650)
+    segmentStableNotesRegions(inputFile='../../sounds/sax-phrase-short.wav',
+                              stdThsld=5, minNoteDur=0.6,
+                              winStable=3, window='hamming', M=1025,
+                              N=2048, H=256, f0et=5.0, t=-100,
+                              minf0=310, maxf0=650)

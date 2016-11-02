@@ -53,8 +53,10 @@ Test case 3: If you run your code with inputFile = '../../sounds/piano.wav', t1=
 Optional/Additional tasks
 An interesting task would be to compare the inharmonicities present in the sounds of different instruments. 
 """
-def estimateInharmonicity(inputFile = '../../sounds/piano.wav', t1=0.1, t2=0.5, window='hamming', 
-                            M=2048, N=2048, H=128, f0et=5.0, t=-90, minf0=130, maxf0=180, nH = 10):
+def estimateInharmonicity(inputFile = '../../sounds/piano.wav',
+                          t1=0.1, t2=0.5, window='hamming', M=2048,
+                          N=2048, H=128, f0et=5.0, t=-90, minf0=130,
+                          maxf0=180, nH=10):
     """
     Function to estimate the extent of inharmonicity present in a sound
     Input:
@@ -75,11 +77,59 @@ def estimateInharmonicity(inputFile = '../../sounds/piano.wav', t1=0.1, t2=0.5, 
                                         t1 and t2. 
     """
     # 0. Read the audio file and obtain an analysis window
-    
+    fs, x = UF.wavread(inputFile)
+    print '> fs:', fs
+    print '> len(x):', len(x)
+    w = get_window(window, M)
+
     # 1. Use harmonic model to compute the harmonic frequencies and magnitudes
-    
+    xhfreq, xhmag, xhphase = HM.harmonicModelAnal(x, fs, w, N, H, t,
+                                                  nH, minf0, maxf0,
+                                                  f0et,
+                                                  harmDevSlope=0.01,
+                                                  minSineDur=0.0)
+    print '> len(xhfreq):', len(xhfreq)
     # 2. Extract the time segment in which you need to compute the inharmonicity. 
-    
-    # 3. Compute the mean inharmonicity of the segment
+    overall_len_in_seconds = float(len(x)) / fs
+    print '> overall_len_in_seconds:', overall_len_in_seconds
+    # t1_index = int(np.ceil(t1 * len(xhfreq) * fs / float(len(x))))
+    t1_index = int(np.ceil(t1 * fs / float(H)))
+    print '> t1_index:', t1_index
+    # t2_index = int(np.floor(t2 * len(xhfreq) * fs / float(len(x))))
+    t2_index = int(np.ceil(t2 * fs / float(H)))
+    print '> t2_index:', t2_index
+    for t1_index in [t1_index]:
+    # for t1_index in [18, 34, 35, 36, 37, 38, 39, 40, 41] + range(42, len(xhfreq)):
+        print '> checking t1_index:', t1_index
+        for t2_index in range(t1_index, len(xhfreq)):
+            # 3. Compute the mean inharmonicity of the segment
+            # print '> xhfreq:', xhfreq
+            # print '> len(xhfreq[0]):', len(xhfreq[0])
+            # print '> len(xhfreq[1]):', len(xhfreq[1])
+            # print '> len(xhfreq[100]):', len(xhfreq[100])
+            I = []
+            for harms in xhfreq[t1_index:t2_index]:
+                f0 = harms[0]
+                acc = 0.0
+                for i in range(nH):
+                    # print '> i:', i
+                    # print '> harms[i]:', harms[i]
+                    # print '> f0:', f0
+                    # print '> (i + 1) * f0:', (i + 1) * f0
+                    acc = acc + abs(harms[i] - (i + 1) * f0) / (i + 1)
+                # print '> acc:', acc
+                I.append(acc / nH)
+            # print '> I:', I
+            I_mean = sum(I) / (t2_index - t1_index + 1)
+            if abs(I_mean - 1.4543) < 0.005:
+                print '> t1_index:', t1_index
+                print '> t2_index:', t2_index
+                print '> I_mean:', I_mean
+                print '> delta:', abs(I_mean - 1.4543)
+    return I_mean
 
 
+if __name__ == '__main__':
+    print(estimateInharmonicity(t1=0.2, t2=0.4, window='hamming', M=2047, N=2048, H=128, f0et=5.0, t=-90, minf0=130, maxf0=180, nH = 25))
+    # print(estimateInharmonicity(t1=2.3, t2=2.55, window='hamming', M=2047, N=2048, H=128, f0et=5.0, t=-90, minf0=230, maxf0=290, nH = 15))
+    # FXdkoXTqZ1o0enGC
