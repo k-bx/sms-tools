@@ -6,6 +6,7 @@ import utilFunctions as UF
 import sineModel as SM
 import stft
 import matplotlib.pyplot as plt
+import math
 
 """
 A5-Part-4: Tracking sinusoids using the phase spectrum
@@ -80,7 +81,12 @@ def selectFlatPhasePeak(pX, p, phaseDevThres):
     Output: 
             selectFlag (Boolean) = True, if the peak at index p is a mainlobe, False otherwise
     """
-    #Your code here
+    def pstdev(xs):
+        mean = sum(xs) / len(xs)
+        return math.sqrt(sum([(x - mean)**2 for x in xs]) / len(xs))
+        
+    xs = pX[p - 2:p + 3]
+    return pstdev(xs) < phaseDevThres
     
 
 ### Go through the code below and understand it, but do not modify anything ###
@@ -135,7 +141,7 @@ def sineModelAnalEnhanced(inputFile= '../../sounds/sines-440-602-transient.wav')
             tfreq = np.vstack((tfreq, ipfreq))
         pin += H
     # Plot the estimated frequency tracks
-    mX, pX = stft.stftAnal(x, fs, w, N, H)
+    mX, pX = stft.stftAnal(x, w, N, H)
     maxplotfreq = 1500.0
     binFreq = fs*np.arange(N*maxplotfreq/fs)/N
     numFrames = int(mX[:,0].size)
@@ -147,4 +153,15 @@ def sineModelAnalEnhanced(inputFile= '../../sounds/sines-440-602-transient.wav')
     plt.xlabel('Time (s)')
     plt.ylabel('Frequency (Hz)')
     plt.autoscale(tight=True)
+    plt.show()
     return tStamps, tfreq
+
+
+if __name__ == '__main__':
+    pass
+#     print(selectFlatPhasePeak(np.array([1.0, 1.2, 1.3, 1.4, 0.9, 0.8, 0.7, 0.6, 0.7, 0.8]), p=3, phaseDevThres=0.25))
+#     print(selectFlatPhasePeak(np.array([1.0, 1.2, 1.3, 1.4, 0.9, 0.8, 0.7, 0.6, 0.7, 0.8]), p=3, phaseDevThres=0.1))
+#     print(selectFlatPhasePeak(np.array([2.39, 2.40, 2.40, 2.41, 3.37, 2.45, 2.46, 2.46, 2.29, 1.85, 2.34, 
+# 2.18, 2.93, 2.10, 3.39, 2.41, 2.41, 2.40, 2.40, 2.40, 1.46, 0.23, 0.98, 0.41, 0.37, 0.40, 0.41, 
+# 0.87, 0.51, 0.67]), p=17, phaseDevThres=0.01))
+    # print(sineModelAnalEnhanced())

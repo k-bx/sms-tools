@@ -62,7 +62,7 @@ def chirpTracker(inputFile='../../sounds/chirp-150-190-linear.wav'):
            K is the number of frames
     """
     # Analysis parameters: Modify values of the parameters marked XX
-    M = XX                                # Window size in samples
+    M = 4023                                # Window size in samples
     
     ### Go through the code below and understand it, do not modify anything ###    
     H = 128                                     # Hop size in samples
@@ -85,17 +85,17 @@ def chirpTracker(inputFile='../../sounds/chirp-150-190-linear.wav'):
     meanErr = np.mean(np.abs(fTrackTrue[tailF:-tailF,:] - fTrackEst[tailF:-tailF,:]),axis=0)     
     print "Mean estimation error = " + str(meanErr) + ' Hz'      # Print the error to terminal    
     # Plot the estimated and true frequency tracks
-    mX, pX = stft.stftAnal(x, fs, w, N, H)
+    mX, pX = stft.stftAnal(x, w, N, H)
     maxplotfreq = 1500.0
     binFreq = fs*np.arange(N*maxplotfreq/fs)/N
-    plt.pcolormesh(tStamps, binFreq, np.transpose(mX[:,:N*maxplotfreq/fs+1]),cmap = 'hot_r')
-    plt.plot(tStamps,fTrackTrue, 'o-', color = 'c', linewidth=3.0)
-    plt.plot(tStamps,fTrackEst, color = 'y', linewidth=2.0)
-    plt.legend(('True f1', 'True f2', 'Estimated f1', 'Estimated f2'))
-    plt.xlabel('Time (s)')
-    plt.ylabel('Frequency (Hz)')
-    plt.autoscale(tight=True)
-    plt.show()
+    # plt.pcolormesh(tStamps, binFreq, np.transpose(mX[:,:N*maxplotfreq/fs+1]),cmap = 'hot_r')
+    # plt.plot(tStamps,fTrackTrue, 'o-', color = 'c', linewidth=3.0)
+    # plt.plot(tStamps,fTrackEst, color = 'y', linewidth=2.0)
+    # plt.legend(('True f1', 'True f2', 'Estimated f1', 'Estimated f2'))
+    # plt.xlabel('Time (s)')
+    # plt.ylabel('Frequency (Hz)')
+    # plt.autoscale(tight=True)
+    # plt.show()
     return M, H, tStamps, fTrackEst, fTrackTrue  # Output returned 
 
 ### Do not modify this function
@@ -105,7 +105,7 @@ def genTimeStamps(xlen, M, fs, H):
     hM2 = int(np.floor(M/2))                         
     xlen = xlen + 2*hM2
     pin = hM1
-    pend = xlen - hM1                                     
+    pend = xlen - hM1
     tStamps = np.arange(pin,pend,H)/float(fs)
     return tStamps
 
@@ -118,3 +118,5 @@ def genTrueFreqTracks(tStamps):
     fTrack[:,1] = np.transpose(np.linspace(150, 150+1250, len(tStamps)))
     return fTrack
     
+# if __name__ == '__main__':
+#     chirpTracker()
