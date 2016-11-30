@@ -1,0 +1,48 @@
+clarinet tag:good-sounds, cello, naobo
+
+Task 1.
+
+    sounds = 
+        [('clarinet', 'multisample', (0, 10)),
+         ('cello', 'multisample', (0, 10)),
+         ('naobo', None, (0, 10))]
+
+I chose clarinet, cello and naobo. For clarinet and cello I've used "multisample" tag for better filtering, while naobo has no sounds with that tag, so I used none. I used duration up to 10 seconds just because it's stated in the task.
+
+I used the "find tmp -name "*.mp3" -exec echo {} \; -exec afplay {} \;" bash command to check that sounds are good and they seemed to be.
+
+
+
+Task 2.
+
+First try:
+
+- Number 10 is for lowlevel.spectral_contrast.mean.5
+
+- Number 3 is for sfx.logattacktime.mean
+
+Spectral contrast splits instruments into clarnet, naobo, cello (lowest to highest) very well, but for logattacktime.mean we see cello has two outliers. So overall not a bad pair, but could be better.
+
+Let's change 3 to 5 having:
+
+- Number 10 is for lowlevel.spectral_contrast.mean.5
+
+- Number 5 is for lowlevel.spectral_contrast.mean.0
+
+We see that while 5 by itself doesn't work that well, they work good together and visually form three separate clusters.
+
+
+
+Task 3.
+
+Used same params as before first (5 and 10). Got 88.33% accuracy because clarnet and cello got mixed at low and mean spectral contrast values.
+
+Added 11 (mfcc), got a better result of 90% accuracy.
+
+
+
+Task 4.
+
+- http://freesound.org/people/ldk1609/sounds/56224/, k=3, descInput=[0, 12] (lowlevel.spectral_centroid.mean, lowlevel.mfcc.mean.1). Classified as clarnet.
+- Same sound, k=3, descInput=[0] (lowlevel.spectral_centroid.mean). Classified as cello. It seams that by mean spector only our violin is near to cello rather than clarnet.
+- http://freesound.org/people/MTG/sounds/355135/, k=5, descInput=[0]. Trying out different params, we can see that oboe is always classified as clarnet no matter how hard I tried. I guess they are similar indeed :)

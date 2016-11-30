@@ -1,0 +1,18 @@
+Number 0 is for lowlevel.spectral_centroid.mean
+Number 1 is for lowlevel.dissonance.mean
+Number 2 is for lowlevel.hfc.mean
+Number 3 is for sfx.logattacktime.mean
+Number 4 is for sfx.inharmonicity.mean
+Number 5 is for lowlevel.spectral_contrast.mean.0
+Number 6 is for lowlevel.spectral_contrast.mean.1
+Number 7 is for lowlevel.spectral_contrast.mean.2
+Number 8 is for lowlevel.spectral_contrast.mean.3
+Number 9 is for lowlevel.spectral_contrast.mean.4
+Number 10 is for lowlevel.spectral_contrast.mean.5
+Number 11 is for lowlevel.mfcc.mean.0
+Number 12 is for lowlevel.mfcc.mean.1
+Number 13 is for lowlevel.mfcc.mean.2
+Number 14 is for lowlevel.mfcc.mean.3
+Number 15 is for lowlevel.mfcc.mean.4
+Number 16 is for lowlevel.mfcc.mean.5
+
