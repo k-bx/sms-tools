@@ -1,0 +1,35 @@
+Week 9 homework
+===============
+
+Ideas for part 1
+----------------
+
+- make your own custom window
+- apply some algorithm weighted by frequencies
+
+A10P1
+-----
+
+3 sounds were recorded by myself, one is a cut from existing one (also recorded here in Kyiv, Ukraine).
+
+Prerequisite analysis of sounds with STFT:
+
+- http://freesound.org/people/ko_bx/sounds/369679/ yuriy_poliychuk_may_cut.wav
+
+Analyzing with STFT we see that frequency is so low it's hard to zoom in enough, so we'd better take a bigger window. 3001 seems to work well. FFT size 4096. Hop 512.
+
+- http://freesound.org/people/ko_bx/sounds/369686/ 330894__sincoon__vase-stereo_cut.wav
+
+Base frequency > 110Hz, so window size for Hamming should be 44100 * 4 / 110 = 1603. FFT size 2048, Hop size 512.
+
+- http://freesound.org/people/ko_bx/sounds/369680/ tuman_yarom_cut.wav
+
+Base freq > 150Hz, so window size for Hamming should be 44100 * 4 / 150 + 1 = 1177. FFT size 2048. Hop size 512.
+
+- http://freesound.org/people/ko_bx/sounds/369681/ guitar_cut.wav
+
+Base freq > 50Hz, quite small, so window should be quite big. Let's take 3001, FFT 4096, Hop 512.
+
+Scenario 1
+----------
+
