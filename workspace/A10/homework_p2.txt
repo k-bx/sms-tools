@@ -1,0 +1,33 @@
+Chosen classes: violin, guitar, bassoon, trumpet, clarinet, cello, xiaoluo, daluo, flute, mridangam, xiaoluo
+
+I took (0, 5) second interval everywhere. I've used "multisample" tag
+everywhere where possible. Naobo, mridangam and daluo didn't have
+enough sounds with that tag, so I've use None tags for them and it
+worked well.
+
+In order to do descriptorPairScatterPlot, I had to define more colors
+in soundAnalysis.py, otherwise it crashed. Change was to make colors
+list like this:
+
+  colors = ['r', 'g', 'c', 'b', 'k', 'm', 'y',
+            [.2, .7, .1], [.6, .3, .6], [.7, .2, .1]]
+
+Launching the descriptorPairScatterPlot with different set of params
+had shown that some descriptors work better for some sounds, some work
+better for others.
+
+Descriptors `0, 3`:
+
+![0, 3](p2-img01-descriptor-0-3.png)
+
+Descriptors `4, 8`:
+
+![4, 8](p2-img02-descriptor-4-8.png)
+
+Descriptors `10, 5`:
+
+![10, 5](p2-img03-descriptor-10-5.png)
+
+We can use these images to see which descriptors should improve our
+clustering in future.
+
