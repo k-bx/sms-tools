@@ -12,24 +12,91 @@ A10P1
 
 3 sounds were recorded by myself, one is a cut from existing one (also recorded here in Kyiv, Ukraine).
 
-Prerequisite analysis of sounds with STFT:
+Prerequisite analysis of sounds with STFT
+-----------------------------------------
 
 - http://freesound.org/people/ko_bx/sounds/369679/ yuriy_poliychuk_may_cut.wav
 
-Analyzing with STFT we see that frequency is so low it's hard to zoom in enough, so we'd better take a bigger window. 3001 seems to work well. FFT size 4096. Hop 512.
+Analyzing with STFT we see that frequency is so low it's hard to zoom in enough, so we'd better take a bigger window. 4001 seems to work well. FFT size 4096. Hop 512.
 
 - http://freesound.org/people/ko_bx/sounds/369686/ 330894__sincoon__vase-stereo_cut.wav
 
 Base frequency > 110Hz, so window size for Hamming should be 44100 * 4 / 110 = 1603. FFT size 2048, Hop size 512.
 
+- http://freesound.org/people/ko_bx/sounds/369681/ guitar_cut.wav
+
+Base freq > 50Hz, quite small, so window should be quite big. Let's take 4001, FFT 4096, Hop 512.
+
 - http://freesound.org/people/ko_bx/sounds/369680/ tuman_yarom_cut.wav
 
 Base freq > 150Hz, so window size for Hamming should be 44100 * 4 / 150 + 1 = 1177. FFT size 2048. Hop size 512.
 
-- http://freesound.org/people/ko_bx/sounds/369681/ guitar_cut.wav
-
-Base freq > 50Hz, quite small, so window should be quite big. Let's take 3001, FFT 4096, Hop 512.
-
 Scenario 1
 ----------
 
+1. Transform yuriy_poliychuk_may_cut.wav with harmonic transformation. It should fit well because voice is a very harmonic sound.
+
+- window: hamming
+- M: 4001
+- N: 4096
+- t: -120
+- minSineDur: 0.02
+- nH: 150
+- minf0: 50
+- maxf0: 250
+- f0et: 9
+- harmDevSlope: 0.01
+- stocf: 0.1
+- freq scaling: [0,1,1,1] -- keeps the same
+- freq stretching: [0, 2, 1, 2] -- stretches two times, sounds a bit more interesting
+- time scaling: [0, 0, 0.1, 2, 1, 1] -- adds a funny reverse-sounding effect at the end
+- save result as: a10p1step1.wav
+
+2. HPS morph result from step 1 (a10p1step1.wav) with 330894__sincoon__vase-stereo_cut.wav.
+
+- params for a10p1step1.wav same as in step 1
+- window2: hamming
+- M2: 1603
+- N2: 2048
+- t2: -100
+- minSineDur2: 0.05
+- minf02: 100
+- maxf02: 200
+- f0et2: 10
+- harmDevSlope2: 0.01
+- nH: 150
+- stocf: 0.1
+- harm freq interp: [0, 0, .1, 0.2, .8, 0.8, 1, 1]
+- harm mag interp: [0, 0, .1, 0.2, .8, 0.8, 1, 1]
+- stoc comp interp: [0, 0, .1, 0.2, .8, 0.8, 1, 1]
+
+Let's give a nice morph factors so that voice is heard most of its way but gets hard to understand towards around the middle and gets "eaten" by the end by the vase sound.
+
+3. HPS morph guitar melody with result of step 2 (a10p1step2.wav)
+
+- window1/window2: hamming
+- M1: 4001
+- N1: 4096
+- t1: -100
+- minSineDur1: 0.05
+- minf01: 40
+- maxf01: 200
+- f0et1: 10
+- harmDevSlope1: 0.01
+- M2: 1603
+- N2: 4096
+- t2: -100
+- minSineDur2: 0.05
+- minf02: 100
+- maxf02: 200
+- f0et2: 10
+- harmDevSlope2: 0.01
+- nH: 150
+- stocf: 0.1
+- harm freq interp: [0, 0, .5, .2, 1, 1]
+- harm mag interp: [0, 0, .5, .2, 1, 1]
+- harm comp interp: [0, 0, .5, .2, 1, 1]
+
+After playing around with different interpolation factors, chose one which just keeps a bit of a guitar and slides towards the end quickly skipping the voice and banging the last bell.
+
+Not too impressive, but hopefully the process was interesting for you :)
