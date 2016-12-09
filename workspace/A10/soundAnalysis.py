@@ -179,6 +179,8 @@ def clusterSounds(targetDir, nCluster = -1, descInput=[]):
     in each cluster. Optionally, you can uncomment the return statement to return the same data.
   """
   
+  # ipdb> dataDetails['cello']['257996']['feature']['lowlevel.dissonance.mean']
+  # [0.5301190614700317]
   dataDetails = fetchDataDetails(targetDir)
   
   ftrArr = []
@@ -192,7 +194,13 @@ def clusterSounds(targetDir, nCluster = -1, descInput=[]):
       ftrArr.append(convFtrDict2List(dataDetails[cname][sname]['feature'])[descInput])
       infoArr.append([sname, cname])
   
+  # ipdb> len(ftrArr)
+  # 200
+  # ipdb> ftrArr[0]
+  # array([ 0.32603848,  0.59179127])
   ftrArr = np.array(ftrArr)
+  # ipdb> infoArr[0]
+  # ['257996', 'cello']
   infoArr = np.array(infoArr)
   
   ftrArrWhite = whiten(ftrArr)

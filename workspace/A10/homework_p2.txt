@@ -1,20 +1,18 @@
+## Question 1: Downloading sound
+
 Chosen classes: violin, guitar, bassoon, trumpet, clarinet, cello, xiaoluo, daluo, flute, mridangam, xiaoluo
 
-I took (0, 5) second interval everywhere. I've used "multisample" tag
-everywhere where possible. Naobo, mridangam and daluo didn't have
-enough sounds with that tag, so I've use None tags for them and it
+I took (0, 5) second interval everywhere. I've used "multisample" tag everywhere where possible. Naobo, mridangam and daluo didn't have enough sounds with that tag, so I've use None tags for them and it
 worked well.
 
-In order to do descriptorPairScatterPlot, I had to define more colors
-in soundAnalysis.py, otherwise it crashed. Change was to make colors
-list like this:
+## Question 2: Obtaining a baseline clustering performance
 
-  colors = ['r', 'g', 'c', 'b', 'k', 'm', 'y',
-            [.2, .7, .1], [.6, .3, .6], [.7, .2, .1]]
+In order to do descriptorPairScatterPlot, I had to define more colors in soundAnalysis.py, otherwise it crashed. Change was to make colors list like this:  
 
-Launching the descriptorPairScatterPlot with different set of params
-had shown that some descriptors work better for some sounds, some work
-better for others.
+```python
+colors = ['r', 'g', 'c', 'b', 'k', 'm', 'y', [.2, .7, .1], [.6, .3, .6], [.7, .2, .1]]
+```
+Launching the descriptorPairScatterPlot with different set of params had shown that some descriptors work better for some sounds, some work better for others.
 
 Descriptors `0, 3`:
 
@@ -28,6 +26,22 @@ Descriptors `10, 5`:
 
 ![10, 5](p2-img03-descriptor-10-5.png)
 
-We can use these images to see which descriptors should improve our
-clustering in future.
+We can use these images to see which descriptors should improve our clustering in future.
+
+Using descriptors `[0, 3]`, I got average of `statistics.mean([50.0, 50.5, 48.5, 50.5, 50.0, 51.0, 49.5, 50.5, 51.0, 49.5]) = 50.1`.
+
+## Question 3: Improvements
+
+Implementation can be seen in the attached code. First attemp – use these classifiers:
+
+- SpectralCentroidTime
+- LogAttackTime
+- SpectralContrast
+- MFCC
+
+Result accuracy: `statistics.mean([57.5, 56.5, 57.0]) = 57.0`
+
+Adding a classifier `RollOff` didn't help much.
+
+But changing stats metrics from `['mean', 'median']` to `['mean', 'var', 'min', 'max']`improved the accuracy to `65%`!
 
