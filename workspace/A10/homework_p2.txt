@@ -43,5 +43,25 @@ Result accuracy: `statistics.mean([57.5, 56.5, 57.0]) = 57.0`
 
 Adding a classifier `RollOff` didn't help much.
 
-But changing stats metrics from `['mean', 'median']` to `['mean', 'var', 'min', 'max']`improved the accuracy to `65%`!
+But changing stats metrics from `['mean', 'median']` to `['mean', 'var', 'min', 'max']`improved the accuracy to `statistics.mean([61, 66.5, 62.5]) = 63.3`!
+
+## Question 3.2: Computing the descriptors stripping the silences and noise at the beginning/end
+
+Let's pick few sounds and compute their energy:
+
+`tmp/bassoon/154350/154350_2626346-hq.mp3`
+
+![energy](p2-img04-energy.png)
+
+`tmp/cello/42251/42251_7037-hq.mp3`
+
+![energy](p2-img05-energy.png)
+
+`./tmp/clarinet/248700/248700_6552981-hq.mp3`
+
+![energy](p2-img06-energy.png)
+
+It seems clear that there's no "one value fits all" for us and ideally we'd use some better statistical approach, but for analysis in our situation it should be sufficient to choose something like 0.1 and take a look.
+
+Accuracy with stripped sounds is: `statistics.mean([55.5, 64.0, 64]) = 61.16`. It seems like our statistics decreased a bit, actually.
 
